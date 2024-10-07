@@ -13,6 +13,10 @@ import java.util.List;
  */
 @Service
 public class AccountService {
+    String errorUsername = "Username is invalid/blank.",
+        errorPassword = "Password is invalid/blank.",
+        errorDuplicate = "Duplicate entry.",
+        errorNone = "Valid entry.";
     AccountRepository accountRepository;
 
     @Autowired
@@ -26,23 +30,21 @@ public class AccountService {
      * @return an Account.
      */
     public Account addAccount(Account account) {
-        if(validateAccount(account)) {
+        if(validateAccount(account) == errorNone) {
             accountRepository.save(account);
             return accountRepository.findByUsername(account.getUsername()).get();
         }
-        else return new Account(-2, account.getUsername(), account.getPassword());
+        else if(validateAccount(account) == errorDuplicate) return new Account(-2, account.getUsername(), account.getPassword());
+        else return new Account(-1, account.getUsername(), account.getPassword());
     }
 
-    private Boolean validateAccount(Account account) {
+    private String validateAccount(Account account) {
         int passMinLength = 4;
 
-        if(
-            !account.getUsername().isBlank() &&
-            account.getPassword().length() >= passMinLength &&
-            !accountRepository.findByUsername(account.getUsername()).isPresent()
-            )
-        return true;
-        else return false;
+        if(account.getUsername().isBlank()) return errorUsername;
+        else if(account.getPassword().length() < passMinLength) return errorPassword;
+        else if(accountRepository.findByUsername(account.getUsername()).isPresent()) return errorDuplicate;
+        else return errorNone;
     }
 
 }
