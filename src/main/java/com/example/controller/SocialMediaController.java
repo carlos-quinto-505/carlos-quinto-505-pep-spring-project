@@ -1,13 +1,16 @@
 package com.example.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.entity.*;
+import com.example.service.*;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -21,12 +24,26 @@ import com.example.entity.*;
  * @author C. Quinto
  */
 @Controller
+@ResponseBody
 public class SocialMediaController {
-    Account account;
-    Message message;
+    AccountService accountService;
 
-    @PostMapping(value = "/register")
-    public @ResponseBody Account register(@RequestBody Account newAccount) {
-        return newAccount; 
+    @Autowired
+    public SocialMediaController(AccountService accountService) {
+        this.accountService = accountService;
+    }
+
+    /**
+     * Handle POST request to account database.
+     * @param account Account data for POST request.
+     * @return a response - a HTTP status code, followed by an entity representing the new record on success.
+     */
+    @PostMapping("/register")
+    public ResponseEntity<Account> addAccount(@RequestBody Account account) {
+        Account newAccount = accountService.addAccount(account);
+
+        if (newAccount.getAccountId() >= 0) return ResponseEntity.status(200).body(newAccount);
+        else if (newAccount.getAccountId() == -2) return ResponseEntity.status(409).build();
+        else return ResponseEntity.status(400).build(); 
     }
 }

@@ -25,9 +25,12 @@ public class AccountService {
      * @param account an Account.
      * @return an Account.
      */
-    public void addAccount(Account account) {
-        if(validateAccount(account))
-        accountRepository.save(account);
+    public Account addAccount(Account account) {
+        if(validateAccount(account)) {
+            accountRepository.save(account);
+            return accountRepository.findByUsername(account.getUsername()).get();
+        }
+        else return new Account(-2, account.getUsername(), account.getPassword());
     }
 
     private Boolean validateAccount(Account account) {
