@@ -38,6 +38,15 @@ public class AccountService {
         else return new Account(-1, account.getUsername(), account.getPassword());
     }
 
+    /**
+     * Find a matching Account record from the database.
+     * @param account an Account.
+     * @return an Account.
+     */
+    public Account getAccountByUsernameAndPassword(Account account) {
+        return accountRepository.findByUsernameAndPassword(account.getUsername(), account.getPassword()).orElse(new Account(-1," ", " "));
+    }
+
     private String validateAccount(Account account) {
         int passMinLength = 4;
 

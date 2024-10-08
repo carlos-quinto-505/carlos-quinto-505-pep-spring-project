@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+import javax.swing.text.html.Option;
+
 
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     /**
@@ -17,4 +19,12 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
      * @return the entity with the given username or an Optional#empty if none found.
      */
     Optional<Account> findByUsername(String username);
+
+    /**
+     * Retrieves an entity by its username and password fields.
+     * @param username a username field value.
+     * @param password a password field value.
+     * @return the entity with the given username and password or an Optional#empty if none found.
+     */
+    Optional<Account> findByUsernameAndPassword(String username, String password);
 }

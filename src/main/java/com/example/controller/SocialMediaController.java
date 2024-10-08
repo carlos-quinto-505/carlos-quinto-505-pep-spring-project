@@ -34,16 +34,29 @@ public class SocialMediaController {
     }
 
     /**
-     * Handle POST request to account database.
+     * Handle POST request to account database endpoint /register.
      * @param account Account data for POST request.
      * @return a response - a HTTP status code, followed by an entity representing the new record on success.
      */
     @PostMapping("/register")
-    public ResponseEntity<Account> addAccount(@RequestBody Account account) {
-        Account newAccount = accountService.addAccount(account);
+    public ResponseEntity<Account> addAccount(@RequestBody Account target) {
+        Account account = accountService.addAccount(target);
 
-        if (newAccount.getAccountId() >= 0) return ResponseEntity.status(200).body(newAccount);
-        else if (newAccount.getAccountId() == -2) return ResponseEntity.status(409).build();
+        if (account.getAccountId() >= 0) return ResponseEntity.status(200).body(account);
+        else if (account.getAccountId() == -2) return ResponseEntity.status(409).build();
         else return ResponseEntity.status(400).build(); 
+    }
+    
+    /**
+     * Handle POST request to account database endpoin /login.
+     * @param account Account data for POST request.
+     * @return a response - a HTTP status code, followed by an entity representing the new record on success.
+     */
+    @PostMapping("/login")
+    public ResponseEntity<Account> loginAccount(@RequestBody Account target) {
+        Account account = accountService.getAccountByUsernameAndPassword(target);
+
+        if(account.getAccountId() != null && account.getAccountId() > 0) return ResponseEntity.status(200).body(account);
+        else return ResponseEntity.status(401).build();
     }
 }
