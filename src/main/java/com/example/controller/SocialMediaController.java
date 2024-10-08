@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,9 +37,9 @@ public class SocialMediaController {
     MessageService messageService;
 
     /**
-     * Handle POST request to account database endpoint /register.
+     * Handle POST request to endpoint /register.
      * @param account Account data for POST request.
-     * @return a response - a HTTP status code, followed by an entity representing the new record on success or an empty response body if request failed.
+     * @return a response - a HTTP status code, followed by the new record entity or an empty response body if request failed.
      */
     @PostMapping("/register")
     public ResponseEntity<Account> addAccount(@RequestBody Account target) {
@@ -50,9 +51,9 @@ public class SocialMediaController {
     }
     
     /**
-     * Handle POST request to account database endpoin /login.
+     * Handle POST request to endpoint /login.
      * @param account Account data for POST request.
-     * @return a response - a HTTP status code, followed by an entity representing the matched record or an empty response body if no match found.
+     * @return a response - a HTTP status code, followed the matched account entity or an empty response body if no match found.
      */
     @PostMapping("/login")
     public ResponseEntity<Account> loginAccount(@RequestBody Account target) {
@@ -63,16 +64,29 @@ public class SocialMediaController {
     }
 
     /**
-     * Handle GET request to message database endpoin /messages.
+     * Handle GET request to endpoint /messages.
      * @return a response - a HTTP status code, followed by a list of retrieved message records.
      */
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getAllMessages() {
         return ResponseEntity.status(200).body(messageService.getAllMessages());
     }
+
+    /**
+     * Handle POST request to endpoint /messages.
+     * @param target the entity containing desired values to persist in the database.
+     * @return a response - a HTTP status code, followed by the added record entity or an empty response body if the request failed.
+     */
+    @PostMapping("/messages")
+    public ResponseEntity<Message> addMessage(@RequestBody Message target) {
+        Message newMessage = messageService.addMessage(target);
+
+        if (newMessage.getMessageId() > 0) return ResponseEntity.status(200).body(newMessage);
+        else return ResponseEntity.status(400).build();
+    }
     
     /**
-     * Handle GET request to message database endpoin /messages/{messageId}.
+     * Handle GET request to endpoint /messages/{messageId}.
      * @return a response - a HTTP status code, followed by a list of retrieved message records.
      */
     @GetMapping("/messages/{messageId}")
@@ -84,8 +98,8 @@ public class SocialMediaController {
     }
     
     /**
-     * Handle GET request to message database endpoin /messages/{messageId}.
-     * @return a response - a HTTP status code, followed by a list of retrieved message records.
+     * Handle GET request to endpoint /messages/{messageId}.
+     * @return a response - a HTTP status code, followed by an integer indicating number of updated rows.
      */
     @DeleteMapping("/messages/{messageId}")
     public ResponseEntity<Integer> deleteMessageById(@PathVariable int messageId) {
@@ -93,5 +107,15 @@ public class SocialMediaController {
 
         if (rows > 0) return ResponseEntity.status(200).body(rows);
         else return ResponseEntity.status(200).build();
+    }
+
+    /**
+     * Handle PATCH request to endpoint /messages/{messageId}
+     * @param messageId the value to match against a record's Id field.
+     * @return a response - a HTTP status code, followed by the updated messaged entity.
+     */
+    @PatchMapping("/messages/{messageId}")
+    public ResponseEntity<Message> updateMessageById(@PathVariable int messageId) {
+        return ResponseEntity.status(400).build();
     }
 }

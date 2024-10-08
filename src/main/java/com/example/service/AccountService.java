@@ -41,6 +41,11 @@ public class AccountService {
         return accountRepository.findByUsernameAndPassword(account.getUsername(), account.getPassword()).orElse(new Account(-1," ", " "));
     }
 
+    /**
+     * Validate an account entity.
+     * @param account the entity to validate.
+     * @return a description of the error found, if any.
+     */
     private String validateAccount(Account account) {
         int passMinLength = 4;
 

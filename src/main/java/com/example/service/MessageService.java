@@ -3,6 +3,7 @@ package com.example.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.entity.Message;
+import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
 import java.util.List;
@@ -15,6 +16,17 @@ import java.util.List;
 public class MessageService {
     @Autowired
     MessageRepository messageRepository;
+    @Autowired
+    AccountRepository accountRepository;
+    
+    /**
+     * Add message record.
+     * @return a list of all messages.
+     */
+    public Message addMessage(Message target) {
+        if (validateMessage(target)) return messageRepository.save(target);
+        else return new Message(-1,-1,"",Long.getLong("-1"));
+    }
     
     /**
      * Get all message records.
@@ -44,5 +56,23 @@ public class MessageService {
             countNew = messageRepository.count();
             return (int)(countOld - countNew);
         } else return 0;
+    }
+
+    /**
+     * Validate a message entity.
+     * @param target the message entity to validate.
+     * @return true if message is valid, false otherwise.
+     */
+    private Boolean validateMessage(Message target) {
+        int charCountMax = 255, charCountMin = 1;
+
+        if (
+            target.getMessageText().isBlank() ||
+            target.getMessageText().length() < charCountMin ||
+            target.getMessageText().length() > charCountMax ||
+            accountRepository.findById(target.getPostedBy()).isEmpty()
+            ) return false;
+
+        return true;
     }
 }
