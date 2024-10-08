@@ -3,14 +3,16 @@ package com.example.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.example.entity.*;
 import com.example.service.*;
+
+import java.util.List;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -27,16 +29,18 @@ import com.example.service.*;
 @ResponseBody
 public class SocialMediaController {
     AccountService accountService;
+    MessageService messageService;
 
     @Autowired
-    public SocialMediaController(AccountService accountService) {
+    public SocialMediaController(AccountService accountService, MessageService messageService) {
         this.accountService = accountService;
+        this.messageService = messageService;
     }
 
     /**
      * Handle POST request to account database endpoint /register.
      * @param account Account data for POST request.
-     * @return a response - a HTTP status code, followed by an entity representing the new record on success.
+     * @return a response - a HTTP status code, followed by an entity representing the new record on success or an empty response body if request failed.
      */
     @PostMapping("/register")
     public ResponseEntity<Account> addAccount(@RequestBody Account target) {
@@ -50,7 +54,7 @@ public class SocialMediaController {
     /**
      * Handle POST request to account database endpoin /login.
      * @param account Account data for POST request.
-     * @return a response - a HTTP status code, followed by an entity representing the new record on success.
+     * @return a response - a HTTP status code, followed by an entity representing the matched record or an empty response body if no match found.
      */
     @PostMapping("/login")
     public ResponseEntity<Account> loginAccount(@RequestBody Account target) {
@@ -58,5 +62,14 @@ public class SocialMediaController {
 
         if(account.getAccountId() != null && account.getAccountId() > 0) return ResponseEntity.status(200).body(account);
         else return ResponseEntity.status(401).build();
+    }
+
+    /**
+     * Handle GET request to message database endpoin /messages.
+     * @return a response - a HTTP status code, followed by a list of retrieved message records.
+     */
+    @GetMapping("/messages")
+    public ResponseEntity<List<Message>> getAllMessages() {
+        return ResponseEntity.status(200).body(messageService.getAllMessages());
     }
 }
