@@ -59,6 +59,35 @@ public class MessageService {
     }
 
     /**
+     * Update message record text field by matching Id.
+     * @param id value to match against record id field.
+     * @param target entity containing desired text value to update.
+     * @return
+     */
+    public int updateMessageTextById(int id, Message target) {
+        Message message = messageRepository.findById(id).orElse(new Message());
+
+        target.setMessageId(id);
+        
+        if (message.getMessageId() != null) {
+            target.setPostedBy(message.getPostedBy());
+            target.setTimePostedEpoch(message.getTimePostedEpoch());
+
+                if (validateMessage(target)) {
+                messageRepository.save(target);
+                return 1;
+            }
+        }
+        
+        return 0;
+    }
+
+    public List<Message> getAllMessagesByPostedById(int id) {
+
+        return null;
+    }
+
+    /**
      * Validate a message entity.
      * @param target the message entity to validate.
      * @return true if message is valid, false otherwise.

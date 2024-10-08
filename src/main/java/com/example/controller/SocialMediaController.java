@@ -115,7 +115,16 @@ public class SocialMediaController {
      * @return a response - a HTTP status code, followed by the updated messaged entity.
      */
     @PatchMapping("/messages/{messageId}")
-    public ResponseEntity<Message> updateMessageById(@PathVariable int messageId) {
-        return ResponseEntity.status(400).build();
+    public ResponseEntity<Integer> patchMessageById(@PathVariable int messageId, @RequestBody Message target) {
+        int result = messageService.updateMessageTextById(messageId, target);
+
+        if (result > 0) return ResponseEntity.status(200).body(result);
+        else return ResponseEntity.status(400).build();
+    }
+
+    @GetMapping("/accounts/{accountId}/messages")
+    public ResponseEntity<List<Message>> getMessagesByPostedById(@PathVariable int accountId, @RequestBody List<Message> targets) {
+
+        return ResponseEntity.status(200).build();
     }
 }
