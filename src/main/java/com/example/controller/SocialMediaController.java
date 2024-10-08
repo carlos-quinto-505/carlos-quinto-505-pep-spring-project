@@ -16,6 +16,7 @@ import com.example.entity.*;
 import com.example.service.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller using Spring. The endpoints you will need can be
@@ -39,7 +40,7 @@ public class SocialMediaController {
     /**
      * Handle POST request to endpoint /register.
      * @param account Account data for POST request.
-     * @return a response - a HTTP status code, followed by the new record entity or an empty response body if request failed.
+     * @return a response - a HTTP status code, followed by the new record entity or an empty response if request failed.
      */
     @PostMapping("/register")
     public ResponseEntity<Account> addAccount(@RequestBody Account target) {
@@ -53,7 +54,7 @@ public class SocialMediaController {
     /**
      * Handle POST request to endpoint /login.
      * @param account Account data for POST request.
-     * @return a response - a HTTP status code, followed the matched account entity or an empty response body if no match found.
+     * @return a response - a HTTP status code, followed by the matched account entity or an empty response if none found.
      */
     @PostMapping("/login")
     public ResponseEntity<Account> loginAccount(@RequestBody Account target) {
@@ -93,12 +94,12 @@ public class SocialMediaController {
     public ResponseEntity<Message> getMessageById(@PathVariable int messageId) {
         Message target = messageService.getMessageById(messageId);
 
-        if (target.getMessageId() > 0) return ResponseEntity.status(200).body(target);
+        if (!target.getMessageText().isBlank()) return ResponseEntity.status(200).body(target);
         else return ResponseEntity.status(200).build();
     }
     
     /**
-     * Handle GET request to endpoint /messages/{messageId}.
+     * Handle DELETE request to endpoint /messages/{messageId}.
      * @return a response - a HTTP status code, followed by an integer indicating number of updated rows.
      */
     @DeleteMapping("/messages/{messageId}")
@@ -122,9 +123,13 @@ public class SocialMediaController {
         else return ResponseEntity.status(400).build();
     }
 
+    /**
+     * Handle GET request to endpoint /accounts/{accountId}/messages.
+     * @param accountId the value to match against a record's postedBy field.
+     * @return a response - a HTTP status code, followed by a list of matched entities or an empty list if none found.
+     */
     @GetMapping("/accounts/{accountId}/messages")
-    public ResponseEntity<List<Message>> getMessagesByPostedById(@PathVariable int accountId, @RequestBody List<Message> targets) {
-
-        return ResponseEntity.status(200).build();
+    public ResponseEntity<List<Message>> getMessagesByPostedById(@PathVariable int accountId) {
+        return ResponseEntity.status(200).body(messageService.getAllMessagesByPostedById(accountId));
     }
 }

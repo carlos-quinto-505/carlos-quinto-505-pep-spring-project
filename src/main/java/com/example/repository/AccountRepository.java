@@ -7,6 +7,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * Account repository layer.
+ * @author C. Quinto
+ */
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     /**

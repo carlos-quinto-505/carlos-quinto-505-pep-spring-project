@@ -7,6 +7,7 @@ import com.example.repository.AccountRepository;
 import com.example.repository.MessageRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service layer for message database interation.
@@ -41,7 +42,22 @@ public class MessageService {
      * @return a message entity with a matching Id or a Message#empty if no match is found.
      */
     public Message getMessageById(Integer id) {
-        return messageRepository.findById(id).orElse(new Message(-1,-1,"",Long.getLong("-1")));
+        return messageRepository.findById(id).orElse(new Message(null,"",null));
+    }
+
+    /**
+     * Get message records by matching postedBy Id.
+     * @param id value to match against an entry's postedBy field.
+     * @return list of entities with the matching value or an empty list if none found.
+     */
+    public List<Message> getAllMessagesByPostedById(int id) {
+        Optional<List<Message>> optionalResult = messageRepository.findAllByPostedBy(id);
+        
+        if (optionalResult.isPresent()) {
+            return optionalResult.get();
+        } else {
+            return List.of(new Message());
+        }
     }
 
     /**
@@ -80,11 +96,6 @@ public class MessageService {
         }
         
         return 0;
-    }
-
-    public List<Message> getAllMessagesByPostedById(int id) {
-
-        return null;
     }
 
     /**
