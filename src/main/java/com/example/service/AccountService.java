@@ -11,16 +11,12 @@ import com.example.repository.AccountRepository;
  */
 @Service
 public class AccountService {
+    @Autowired
     AccountRepository accountRepository;
     String errorUsername = "Username is invalid/blank.",
         errorPassword = "Password is invalid/blank.",
         errorDuplicate = "Duplicate entry.",
         errorNone = "Valid entry.";
-
-    @Autowired
-    public AccountService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
 
     /**
      * Persist account record

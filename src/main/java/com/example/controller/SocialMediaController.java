@@ -3,7 +3,9 @@ package com.example.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,14 +30,10 @@ import java.util.List;
 @Controller
 @ResponseBody
 public class SocialMediaController {
-    AccountService accountService;
-    MessageService messageService;
-
     @Autowired
-    public SocialMediaController(AccountService accountService, MessageService messageService) {
-        this.accountService = accountService;
-        this.messageService = messageService;
-    }
+    AccountService accountService;
+    @Autowired
+    MessageService messageService;
 
     /**
      * Handle POST request to account database endpoint /register.
@@ -71,5 +69,29 @@ public class SocialMediaController {
     @GetMapping("/messages")
     public ResponseEntity<List<Message>> getAllMessages() {
         return ResponseEntity.status(200).body(messageService.getAllMessages());
+    }
+    
+    /**
+     * Handle GET request to message database endpoin /messages/{messageId}.
+     * @return a response - a HTTP status code, followed by a list of retrieved message records.
+     */
+    @GetMapping("/messages/{messageId}")
+    public ResponseEntity<Message> getMessageById(@PathVariable int messageId) {
+        Message target = messageService.getMessageById(messageId);
+
+        if (target.getMessageId() > 0) return ResponseEntity.status(200).body(target);
+        else return ResponseEntity.status(200).build();
+    }
+    
+    /**
+     * Handle GET request to message database endpoin /messages/{messageId}.
+     * @return a response - a HTTP status code, followed by a list of retrieved message records.
+     */
+    @DeleteMapping("/messages/{messageId}")
+    public ResponseEntity<Integer> deleteMessageById(@PathVariable int messageId) {
+        int rows = messageService.deleteMessageById(messageId);
+
+        if (rows > 0) return ResponseEntity.status(200).body(rows);
+        else return ResponseEntity.status(200).build();
     }
 }

@@ -13,12 +13,8 @@ import java.util.List;
  */
 @Service
 public class MessageService {
-    MessageRepository messageRepository;
-
     @Autowired
-    public MessageService(MessageRepository messageRepository) {
-        this.messageRepository = messageRepository;
-    }
+    MessageRepository messageRepository;
     
     /**
      * Get all message records.
@@ -28,5 +24,25 @@ public class MessageService {
         return messageRepository.findAll();
     }
 
-    
+    /**
+     * Get message record by matching Id.
+     * @return a message entity with a matching Id or a Message#empty if no match is found.
+     */
+    public Message getMessageById(Integer id) {
+        return messageRepository.findById(id).orElse(new Message(-1,-1,"",Long.getLong("-1")));
+    }
+
+    /**
+     * Delete message record by matching Id.
+     * @return number of rows updated.
+     */
+    public int deleteMessageById(Integer id) {
+        if (messageRepository.existsById(id)) {
+            long countNew = 0, countOld = messageRepository.count();
+
+            messageRepository.deleteById(id);
+            countNew = messageRepository.count();
+            return (int)(countOld - countNew);
+        } else return 0;
+    }
 }
